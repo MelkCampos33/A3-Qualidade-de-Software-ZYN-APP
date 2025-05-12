@@ -4,27 +4,61 @@ import './art.css';
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
   const navigate = useNavigate();
+
+  const handleCadastro = async () => {
+    
+    try {
+      const resposta = await fetch('http://localhost:3000/routes/registros.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nome: 'Usuário Teste', 
+          email: email,
+          senha: senha
+        })
+      });
+
+      const dados = await resposta.json();
+      if (resposta.ok) {
+        alert('Cadastro realizado com sucesso!');
+        navigate('/Home');
+      } else {
+        alert('Erro: ' + dados.erro);
+      }
+    } catch (err) {
+      alert('Erro ao conectar com a API');
+      console.error(err);
+    }
+  };
 
   return (
     <div className='container'>
       <form>
+        <div className='welcome'>
+          <h1 className='title'> Acesse sua conta </h1>
+          <p> Olá! Seja bem vindo de volta </p>
+        </div>
 
-       <div className='welcome'>
-        <h1 className='title'> Acesse sua conta </h1>
-        <p> Olá! Seja bem vindo de volta </p>
-       </div>
-
-        <input placeholder='email' email='email' type='text' />
+        <input
+          placeholder='Email'
+          type='text'
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
 
         <div className="password-wrapper">
           <input
             placeholder='Senha'
             name='password'
             type={showPassword ? 'text' : 'password'}
+            value={senha}
+            onChange={(e) => setSenha(e.target.value)}
           />
           <button
-            className="show-passoword"
+            className="show-password"
             type='button'
             onClick={() => setShowPassword(!showPassword)}
           >
@@ -34,10 +68,10 @@ function Login() {
 
         <div className="button-group">
           <button type='button' onClick={() => navigate('/Home')}>Entrar</button>
-          <button type='button' onClick={() => navigate('/Register')}>Cadastrar</button>
+          <button type='button' onClick={handleCadastro}>Cadastrar</button>
         </div>
 
-          <div className="social-login">
+        <div className="social-login">
           <p className="social-text">Ou acesse usando</p>
 
           <div className="social-icons">
@@ -52,7 +86,6 @@ function Login() {
         </div>
       </form>
     </div>
-    
   );
 }
 
