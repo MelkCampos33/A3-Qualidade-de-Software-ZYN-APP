@@ -66,7 +66,7 @@ function Login() {
       }
 
     } catch (err) {
-      alert('Erro ao conectar com a API'); // mmostra erros via API
+      alert('Erro ao conectar com a API'); // mostra erros via API
       console.error(err);
       
     } finally {

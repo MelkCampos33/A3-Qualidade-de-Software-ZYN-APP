@@ -42,7 +42,7 @@ function Register() {
       
     }
 
-    // Bloquear caracteres perigosos
+    // Bloquear caracteres invalidos
     const invalido = /[<>"';]/;
     if (invalido.test(form.nome) || invalido.test(form.email)) {
       alert('Caracteres inválidos detectados em nome ou email.');
