@@ -20,6 +20,7 @@ function Exercicios() {
             <nav>
                 <a href="#" className="logo"> Zyn </a>
 
+                {/* rotas de navegação */}
                 <div className="links">
                     <button type='button' onClick={() => navigate('/Home')}>Home</button>
                     <button type='button' onClick={() => navigate('/Exercicios')}>Exercícios</button>
@@ -62,14 +63,16 @@ function Exercicios() {
 
 
                     <div className="item">
+                        
                         <img width={280} height={220} src="src/assets/agua.jpg" alt="Água" />
-                        <h5>Litros de Água</h5>
 
+                        <h5>Litros de Água</h5>
                         <div className="info">
                             <div className="meta">
                                 <p id="meta-style">Meta de 6L de água</p>
                                 <p>{agua} L de 6L</p>
                                 <div className="controls">
+                                    {/* botão de controle - acrescentar ou diminuir valores dentro do elemento */}
                                     <button onClick={() => adjust(setAgua, agua, 0.5)}>+</button>
                                     <button onClick={() => adjust(setAgua, agua, -0.5)}>-</button>
                                 </div>
@@ -90,6 +93,8 @@ function Exercicios() {
                             <div className="meta">
                                 <p id="meta-style">Meta de 2 horas</p>
                                 <p>{tempo} min realizados</p>
+
+                                {/* botão de controle - acrescentar ou diminuir valores dentro do elemento */}
                                 <div className="controls">
                                     <button onClick={() => adjust(setTempo, tempo, 5)}>+</button>
                                     <button onClick={() => adjust(setTempo, tempo, -5)}>-</button>

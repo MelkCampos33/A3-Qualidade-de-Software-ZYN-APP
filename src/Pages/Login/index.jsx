@@ -9,7 +9,7 @@ function Login() {
   const navigate = useNavigate();
 
   const handleLogin = async (event) => {
-    event.preventDefault();
+    event.preventDefault(); // preveni comportamento padrao do formulario
 
     // Remove espaços em branco acidentais
     const emailFormatado = email.trim();
@@ -21,17 +21,20 @@ function Login() {
       return;
     }
 
-     const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailFormatado);
+    // validação da formatação do email
+    const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailFormatado);
     if (!emailValido) {
       alert('Digite um email válido.');
       return;
     }
 
+    // validação de tamanho especifico de senha
     if (senhaFormatada.length < 6) {
       alert('A senha deve ter pelo menos 6 caracteres.');
       return;
     }
 
+    // verificação de conecção
     if (!navigator.onLine) {
       alert('Você está offline. Verifique sua conexão com a internet.');
       return;

@@ -11,6 +11,7 @@ function Alimentacao() {
             <nav>
                 <a href="#" className="logo"> Zyn </a>
 
+                {/* Rotas de navegação */}
                 <div className="links">
                     <button type='button' onClick={() => navigate('/Home')}>Home</button>
                     <button type='button' onClick={() => navigate('/Exercicios')}>Exercícios</button>
