@@ -1,10 +1,12 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './art.css';
 
 // Estado que armazena os dados do formulário de registro
 function Register() {
   const [showPassword, setShowPassword] = useState(false);
-  const [carregando, setCarregando] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const [form, setForm] = useState({
     nome: '',
@@ -26,12 +28,12 @@ function Register() {
   // é executada ao submeter o formulário
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setCarregando(true);
+    setLoading(true);
 
     // Trim e verificações básicas
     if (!form.nome || !form.email || !form.senha || !form.peso || !form.altura) {
       alert('Preencha todos os campos obrigatórios');
-      setCarregando(false);
+      setLoading(false);
       return;
     }
 
@@ -39,7 +41,7 @@ function Register() {
     const senhaFraca = ['123456', 'senha', 'admin', 'abcdef'];
     if (form.senha.length < 6 || senhaFraca.includes(form.senha.toLowerCase())) {
       alert('Escolha uma senha mais segura (mínimo 6 caracteres, evite senhas fracas).');
-      setCarregando(false);
+      setLoading(false);
       return;
     }
 
@@ -47,7 +49,7 @@ function Register() {
     const invalido = /[<>"';]/;
     if (invalido.test(form.nome) || invalido.test(form.email)) {
       alert('Caracteres inválidos detectados em nome ou email.');
-      setCarregando(false);
+      setLoading(false);
       return;
     }
 
@@ -57,7 +59,7 @@ function Register() {
       const valor = parseFloat(form[campo]);
       if (isNaN(valor) || valor <= 0) {
         alert(`O campo "${campo.replace('_', ' ')}" deve conter um número positivo.`);
-        setCarregando(false);
+        setLoading(false);
         return;
       }
     }
@@ -65,7 +67,7 @@ function Register() {
     // Verificar conexão
     if (!navigator.onLine) {
       alert('Você está offline. Verifique sua conexão com a internet.');
-      setCarregando(false);
+      setLoading(false);
       return;
     }
 
@@ -102,7 +104,7 @@ function Register() {
       console.error(err);
 
     } finally {
-      setCarregando(false);
+      setLoading(false);
     }
   };
 
@@ -203,8 +205,10 @@ function Register() {
         />
 
         <div className="button-group">
-          <button type="submit">Registrar</button>
-          <button type="button" onClick={() => navigate('/')}>Voltar</button>
+          <button type='submit' disabled={loading}>
+            {loading ? 'Cadastrando...' : 'Cadastrar'}
+          </button>
+          <button type='button' onClick={() => navigate('/')}> Voltar </button>
         </div>
       </form>
     </div>

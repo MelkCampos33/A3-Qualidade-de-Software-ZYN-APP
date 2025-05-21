@@ -6,10 +6,12 @@ function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState(''); // Estados para armazenar os valores digitados
   const [senha, setSenha] = useState('');
+  const [loading, setLoading] = useState(false); // Estado para controlar o carregamento
   const navigate = useNavigate();
 
   const handleLogin = async (event) => {
     event.preventDefault(); // preveni comportamento padrao do formulario
+    setLoading(true); // inicia o carregamento
 
     // Remove espaços em branco acidentais
     const emailFormatado = email.trim();
@@ -18,6 +20,7 @@ function Login() {
     // validações basicas
     if (!emailFormatado || !senhaFormatada) {
       alert('Preencha todos os campos');
+      setLoading(false);
       return;
     }
 
@@ -25,18 +28,21 @@ function Login() {
     const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailFormatado);
     if (!emailValido) {
       alert('Digite um email válido.');
+      setLoading(false);
       return;
     }
 
     // validação de tamanho especifico de senha
     if (senhaFormatada.length < 6) {
       alert('A senha deve ter pelo menos 6 caracteres.');
+      setLoading(false);
       return;
     }
 
     // verificação de conecção
     if (!navigator.onLine) {
       alert('Você está offline. Verifique sua conexão com a internet.');
+      setLoading(false);
       return;
     }
 
@@ -71,7 +77,7 @@ function Login() {
     } catch (err) {
       alert('Erro ao conectar com a API'); // mostra erros via API
       console.error(err);
-      
+
     } finally {
       setCarregando(false); // finaliza o carregamento
     }
@@ -113,7 +119,9 @@ function Login() {
         </div>
 
         <div className="button-group">
-          <button type='submit'>Entrar</button>
+          <button type='submit' disabled={carregando}>
+            {carregando ? 'Carregando...' : 'Entrar'}
+          </button>
           <button type='button' onClick={() => navigate('/Register')}>Cadastrar</button>
         </div>
 
