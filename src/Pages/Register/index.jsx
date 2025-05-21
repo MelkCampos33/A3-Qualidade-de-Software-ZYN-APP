@@ -4,6 +4,8 @@ import './art.css';
 // Estado que armazena os dados do formulário de registro
 function Register() {
   const [showPassword, setShowPassword] = useState(false);
+  const [carregando, setCarregando] = useState(false);
+
   const [form, setForm] = useState({
     nome: '',
     email: '',
@@ -15,37 +17,37 @@ function Register() {
     meta_perda_peso: ''
   });
 
-    // atualiza o estado do formulário sempre que um campo for alterado
-    const handleChange = (e) => {
-      setForm({ ...form, [e.target.name]: e.target.value });
-    };
+  // atualiza o estado do formulário sempre que um campo for alterado
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setForm({ ...form, [name]: type === 'checkbox' ? checked : value });
+  };
 
-    // é executada ao submeter o formulário
-    const handleSubmit = async (e) => {
-      e.preventDefault();
+  // é executada ao submeter o formulário
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setCarregando(true);
 
     // Trim e verificações básicas
-    const camposObrigatorios = ['nome', 'email', 'senha', 'peso', 'altura', 'gordura_corporal', 'faz_exercicio', 'meta_perda_peso'];
-
-    for (const campo of camposObrigatorios) {
-      if (!form[campo] || form[campo].toString().trim() === '') {
-        alert(`O campo "${campo.replace('_', ' ')}" não pode estar vazio.`);
-        return;
-      }
+    if (!form.nome || !form.email || !form.senha || !form.peso || !form.altura) {
+      alert('Preencha todos os campos obrigatórios');
+      setCarregando(false);
+      return;
     }
 
-     // Validação de senha
+    // Validação de senha
     const senhaFraca = ['123456', 'senha', 'admin', 'abcdef'];
     if (form.senha.length < 6 || senhaFraca.includes(form.senha.toLowerCase())) {
       alert('Escolha uma senha mais segura (mínimo 6 caracteres, evite senhas fracas).');
+      setCarregando(false);
       return;
-      
     }
 
     // Bloquear caracteres invalidos
     const invalido = /[<>"';]/;
     if (invalido.test(form.nome) || invalido.test(form.email)) {
       alert('Caracteres inválidos detectados em nome ou email.');
+      setCarregando(false);
       return;
     }
 
@@ -55,6 +57,7 @@ function Register() {
       const valor = parseFloat(form[campo]);
       if (isNaN(valor) || valor <= 0) {
         alert(`O campo "${campo.replace('_', ' ')}" deve conter um número positivo.`);
+        setCarregando(false);
         return;
       }
     }
@@ -62,28 +65,44 @@ function Register() {
     // Verificar conexão
     if (!navigator.onLine) {
       alert('Você está offline. Verifique sua conexão com a internet.');
+      setCarregando(false);
       return;
     }
 
 
     try {
-      const res = await fetch('http://localhost:3000/api/routes/users/resgiter-full', {
+      const res = await fetch('/api/users/resgiter-full', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' }, // corpo da requisisão em formato JSON
-        body: JSON.stringify(form) // convertendo os objetos do formulário para JSON
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nome: form.nome.trim(),
+          email: form.email.trim(),
+          senha: form.senha,
+          peso: parseFloat(form.peso),
+          altura: parseFloat(form.altura),
+          gordura_corporal: form.gordura_corporal ? parseFloat(form.gordura_corporal) : null,
+          faz_exercicio: form.faz_exercicio,
+          meta_perda_peso: form.meta_perda_peso ? parseFloat(form.meta_perda_peso) : null
+        })
       });
 
       const data = await res.json();
-      
-      if (res.ok) {
-        alert(data.mensagem);
+
+     
+      if (resposta.ok) {
+        alert('Cadastro realizado com sucesso!');
         navigate('/');
+
       } else {
-        alert(`Erro: ${data.erro}`);
+        alert(dados.erro || 'Erro ao cadastrar usuário. Tente novamente.');
       }
+
     } catch (err) {
-      console.error('Erro ao conectar com a API:', err);
       alert('Erro ao conectar com a API. Verifique se o servidor está rodando.');
+      console.error(err);
+
+    } finally {
+      setCarregando(false);
     }
   };
 
@@ -177,6 +196,7 @@ function Register() {
           name="meta_perda_peso"
           type="number"
           step="0.1"
+          min="0"
           value={form.meta_perda_peso}
           onChange={handleChange}
           required
